@@ -7,12 +7,55 @@ dotenv.config();
 import { Configuration, OpenAIApi } from 'openai';
 app.use(cors());
 app.use(bodyParser.json());
-import axios from 'axios';
 import { getTopWords } from './services/scraper.js';
 import pkg from 'pg';
 const { Pool } = pkg;
-import { createPoemQuery } from './services/makeQuery.js';
+import { createPoemQuery, getTodaysPoemsQuery } from './services/makeQuery.js';
+import { generateOnceADay } from './services/poemsPerDay.js';
 ////// --------- end of imports
+
+///////////////---------SOCKET.io
+import { createServer } from 'http';
+const server = createServer(app);
+import { Server } from 'socket.io';
+import { getSentiment } from './services/getSentiment.js';
+const io = new Server(server, { cors: {} });
+// make one function socket.on('newpoem') => create query
+// make one function socket.on('vote') => update query
+io.on('connection', (socket) => {
+  console.log('socket connected');
+  ///------ NEW POEM ----------------
+  /// dont need cause im just making poems at the begining of each day.
+  /// why should i rely on user to make poems....
+  // Emit the event to all connected clients
+
+  ///users
+  ///GET ALL POEMS ON TODAY ---------------
+  socket.on('get_todays_poems', (key) => {
+    console.log('get_todayt emit recieved');
+    console.log({ key });
+    const query = getTodaysPoemsQuery(key);
+    console.log({ query });
+    pool.query(query, (err, result) => {
+      if (err) {
+        console.log(err);
+        socket.emit('error', 'Error while retrieving entry');
+      } else {
+        console.log(result.rows.length);
+        console.log('query succesful');
+        result.rows.forEach((poem) => {
+          poem.content = poem.content.split(',');
+        });
+        socket.emit('todays_poems', {
+          success: true,
+          code: 200,
+          data: result.rows,
+        });
+      }
+    });
+  });
+});
+///////////------
 
 // Set up PostgreSQL pool
 const pool = new Pool({
@@ -31,6 +74,7 @@ pool.connect((err) => {
 });
 
 //////// ------------- OPENAI
+////// this isnt beign used this was just to work out OPENAI
 const configuration = new Configuration({
   organization: 'org-KZwE34ORK6RH6KIXeLyykQAd',
   apiKey: process.env.OPENAI_API_KEY,
@@ -66,23 +110,6 @@ app.post('/', async (req, res) => {
     return res.send({ success: false, code: 500, response: 'ERROR' });
   }
 });
-///////////////---------SOCKET.io
-import { createServer } from 'http';
-const server = createServer(app);
-import { Server } from 'socket.io';
-import * as socketio from 'socket.io'; /// needed?
-const io = new Server(server, { cors: {} });
-// make one function socket.on('newpoem') => create query
-// make one function socket.on('vote') => update query
-io.on('connection', (socket) => {
-  socket.on('calendar:updated', () => {
-    console.log(socket.id);
-    console.log('socket emit');
-    // Emit the event to all connected clients
-    io.emit('calendar:updated', { foo: 1 });
-  });
-});
-///////////------
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
@@ -108,6 +135,7 @@ app.post('/save', async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Express server listening on ${process.env.PORT}`);
 });
+generateOnceADay;

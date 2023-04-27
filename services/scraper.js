@@ -33,6 +33,9 @@ const getTopWords = async (key) => {
   filteredWords = filteredWords.filter(
     (word) => !stopwords.includes(word.toLocaleLowerCase())
   );
+  filteredWords = filteredWords.map((word) => {
+    return word.replace(/[^a-zA-Z]/g, '');
+  });
 
   const wordCounts = {};
   for (let i = 0; i < filteredWords.length; i++) {
@@ -48,9 +51,12 @@ const getTopWords = async (key) => {
     wordCountArray.push({ word, count: wordCounts[word] });
   }
   wordCountArray.sort((a, b) => b.count - a.count);
-  const top20Words = wordCountArray.slice(0, 10);
-  console.log({ top20Words });
-  return top20Words;
+  const topWords = wordCountArray.slice(0, 10);
+  const topList = [];
+  for (let i = 0; i < topWords.length; i++) {
+    topList.push(topWords[i].word);
+  }
+  return topList;
 };
 
 export { getTopWords };
