@@ -14,6 +14,7 @@ const stopwords = [
   "it's",
   '|',
   '--',
+  '/',
   ///// these are ones i added
   //   "i'm",
   'i',

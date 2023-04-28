@@ -2,8 +2,19 @@ import cron from 'node-cron';
 // import { pool } from '../server.js';
 import { getTopWords } from './scraper.js';
 import { createPoemQuery } from './makeQuery.js';
+import { openai, pool } from '../server.js';
+import { getSentiment } from './getSentiment.js';
 
-const generateOnceADay = cron.schedule('0 0 * * *', async () => {
+const cronTest = cron.schedule('* * * * *', () => {
+  console.log('cron');
+  const now = new Date();
+  const time = now.toLocaleTimeString();
+  console.log(time);
+});
+
+////// need to iron out timing of this... time stamp is create in isostring 8601 format
+//// cron schedules in local time so there is an overlap of no haikus...
+const generateOnceADay = cron.schedule('55 17 * * *', () => {
   console.log('Once a Day');
   makeAllForCategory('pop');
   makeAllForCategory('news');
@@ -21,6 +32,7 @@ const chooseRandomHalf = (list) => {
 };
 
 const makeAllForCategory = async (category) => {
+  console.log('making');
   const topList = await getTopWords(category);
   for (let i = 0; i < 10; i++) {
     makePoem(chooseRandomHalf(topList), category);
@@ -60,7 +72,8 @@ const makePoem = async (list, category) => {
         console.log(err);
       } else {
         console.log({ success: true, code: 200, result: res });
-        socket.emit('server', { success: true, code: 200, result: res });
+        /// might want to add a socket emit here to let front end know there was an update
+        // socket.emit('server', { success: true, code: 200, result: res });
         return;
       }
     });
@@ -69,4 +82,4 @@ const makePoem = async (list, category) => {
     return;
   }
 };
-export { generateOnceADay };
+export { generateOnceADay, cronTest };

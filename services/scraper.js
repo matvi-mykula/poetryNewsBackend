@@ -51,7 +51,7 @@ const getTopWords = async (key) => {
     wordCountArray.push({ word, count: wordCounts[word] });
   }
   wordCountArray.sort((a, b) => b.count - a.count);
-  const topWords = wordCountArray.slice(0, 10);
+  const topWords = wordCountArray.slice(0, 20);
   const topList = [];
   for (let i = 0; i < topWords.length; i++) {
     topList.push(topWords[i].word);

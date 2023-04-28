@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
   ///users
   ///GET ALL POEMS ON TODAY ---------------
   socket.on('get_todays_poems', (key) => {
-    console.log('get_todayt emit recieved');
+    console.log('get_today emit recieved');
     console.log({ key });
     const query = getTodaysPoemsQuery(key);
     console.log({ query });
@@ -46,6 +46,7 @@ io.on('connection', (socket) => {
         result.rows.forEach((poem) => {
           poem.content = poem.content.split(',');
         });
+        console.log(result.rows);
         socket.emit('todays_poems', {
           success: true,
           code: 200,
@@ -138,4 +139,6 @@ app.post('/save', async (req, res) => {
 server.listen(process.env.PORT, () => {
   console.log(`Express server listening on ${process.env.PORT}`);
 });
+export { openai, pool };
 generateOnceADay;
+cronTest;
