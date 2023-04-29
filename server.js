@@ -15,7 +15,7 @@ import {
   getTodaysPoemsQuery,
   makeUpdateQuery,
 } from './services/makeQuery.js';
-import { cronTest, generateOnceADay } from './services/poemsPerDay.js';
+import { generateOnceADay } from './services/poemsPerDay.js';
 ////// --------- end of imports
 
 ///////////////---------SOCKET.io
@@ -24,16 +24,11 @@ const server = createServer(app);
 import { Server } from 'socket.io';
 import { getSentiment } from './services/getSentiment.js';
 const io = new Server(server, { cors: {} });
-// make one function socket.on('newpoem') => create query
-// make one function socket.on('vote') => update query
+
 io.on('connection', (socket) => {
   console.log('socket connected');
   ///------ NEW POEM ----------------
-  /// dont need cause im just making poems at the begining of each day.
-  /// why should i rely on user to make poems....
-  // Emit the event to all connected clients
 
-  ///users
   ///GET ALL POEMS ON TODAY ---------------
   socket.on('get_todays_poems', (key) => {
     console.log('get_today emit recieved');
@@ -162,9 +157,9 @@ app.post('/save', async (req, res) => {
   }
 });
 
+const port = process.env.PORT || '8080';
 server.listen(process.env.PORT, () => {
   console.log(`Express server listening on ${process.env.PORT}`);
 });
 export { openai, pool };
 generateOnceADay;
-cronTest;

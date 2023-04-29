@@ -77,4 +77,4 @@ const makePoem = async (list, category) => {
     return;
   }
 };
-export { generateOnceADay, cronTest };
+export { generateOnceADay };
