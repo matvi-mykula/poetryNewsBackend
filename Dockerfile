@@ -17,7 +17,7 @@ WORKDIR /app
 # to install all modules: "npm install --production=false".
 # Ref: https://docs.npmjs.com/cli/v9/commands/npm-install#description
 
-ENV NODE_ENV production
+ENV PORT=8080
 
 COPY . .
 

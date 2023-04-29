@@ -78,18 +78,39 @@ io.on('connection', (socket) => {
 ///////////------
 
 // Set up PostgreSQL pool
+// const pool = new Pool({
+//   user: process.env.DB_USER,
+//   host: process.env.DB_HOST,
+//   database: process.env.DB_NAME,
+//   password: process.env.DB_PASSWORD,
+//   port: process.env.DB_PORT,
+// });
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  connectionString: process.env.CONNECTION_STRING,
 });
+const createTable = `CREATE TABLE poetryNews (
+  id SERIAL PRIMARY KEY,
+  datestamp DATE,
+  category TEXT,
+  content TEXT,
+  goods INTEGER,
+  bads INTEGER,
+  sentiment TEXT
+);`;
+
 pool.connect((err) => {
   if (err) {
+    console.log('postgres problems');
     console.log(err);
   } else {
     console.log('connected to db');
+    pool.query(createTable, (err, result) => {
+      if (err) {
+        console.log('err');
+      } else {
+        console.log('success');
+      }
+    });
   }
 });
 
@@ -133,7 +154,7 @@ app.post('/', async (req, res) => {
   }
 });
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Hello from subconscious server!');
 });
 app.post('/save', async (req, res) => {
   /////if new poem then create new
@@ -158,8 +179,8 @@ app.post('/save', async (req, res) => {
 });
 
 const port = process.env.PORT || '8080';
-server.listen(process.env.PORT, () => {
-  console.log(`Express server listening on ${process.env.PORT}`);
+server.listen('8080', () => {
+  console.log(`Express server listening on ${port}`);
 });
 export { openai, pool };
 generateOnceADay;
