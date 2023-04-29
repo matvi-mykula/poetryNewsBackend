@@ -15,4 +15,15 @@ const getTodaysPoemsQuery = (key) => {
   return todaysPoemsQuery;
 };
 
-export { createPoemQuery, getTodaysPoemsQuery };
+// search and update on id, id is unique and will not change
+const makeUpdateQuery = (newPoem) => {
+  console.log(newPoem.id);
+  const updatePoemQuery = `UPDATE poetryNews
+    SET 
+    goods = ${newPoem.goods}, 
+    bads = ${newPoem.bads}
+    WHERE id = ${newPoem.id};`;
+  // these are the only things beign updated
+  return updatePoemQuery;
+};
+export { createPoemQuery, getTodaysPoemsQuery, makeUpdateQuery };

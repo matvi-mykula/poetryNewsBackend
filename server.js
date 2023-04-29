@@ -40,13 +40,15 @@ io.on('connection', (socket) => {
     console.log({ key });
     const query = getTodaysPoemsQuery(key);
     console.log({ query });
+
     pool.query(query, (err, result) => {
       if (err) {
         console.log(err);
         socket.emit('error', 'Error while retrieving entry');
       } else {
+        /// is this ok or do i need try catch??
         console.log(result.rows.length);
-        console.log('query succesful');
+        console.log('get poems succesful');
         result.rows.forEach((poem) => {
           poem.content = poem.content.split(',');
         });
@@ -56,6 +58,24 @@ io.on('connection', (socket) => {
           code: 200,
           data: result.rows,
         });
+      }
+    });
+  });
+  //// UPDATE POEMDATA
+  socket.on('poem:updated', (poemData) => {
+    console.log('update');
+    console.log(poemData);
+    const query = makeUpdateQuery(poemData);
+    pool.query(query, (err, result) => {
+      if (err) {
+        console.log(err);
+        socket.emit('error', 'Error while updating data');
+      } else {
+        console.log('update succesful');
+        console.log(result);
+        socket.emit('get_todays_poems', poemData.category); // will this rerender page??
+        /// dont need to do anything else
+        /// emit 'get_todays_poems; from frontend
       }
     });
   });
@@ -95,6 +115,7 @@ app.post('/', async (req, res) => {
       topList.push(topWords[i].word);
     }
 
+    // after release cut down the prompt a bunch to save money
     const prompt = `Write a haiku using some of these words: ${topList}`;
 
     const response = await openai.createCompletion({
@@ -108,6 +129,7 @@ app.post('/', async (req, res) => {
     });
     console.log(response.data.choices);
     const haiku = response.data.choices[0].text;
+    console.log({ haiku });
 
     return res.send({ success: true, code: 200, response: haiku });
   } catch (err) {
