@@ -5,16 +5,11 @@ import { createPoemQuery } from './makeQuery.js';
 import { openai, pool } from '../server.js';
 import { getSentiment } from './getSentiment.js';
 
-const cronTest = cron.schedule('* * * * *', () => {
-  console.log('cron');
-  const now = new Date();
-  const time = now.toLocaleTimeString();
-  console.log(time);
-});
+//
 
 ////// need to iron out timing of this... time stamp is create in isostring 8601 format
 //// cron schedules in local time so there is an overlap of no haikus...
-const generateOnceADay = cron.schedule('55 17 * * *', () => {
+const generateOnceADay = cron.schedule('03 19 * * *', () => {
   console.log('Once a Day');
   makeAllForCategory('pop');
   makeAllForCategory('news');
