@@ -10,8 +10,12 @@ app.use(bodyParser.json());
 import { getTopWords } from './services/scraper.js';
 import pkg from 'pg';
 const { Pool } = pkg;
-import { createPoemQuery, getTodaysPoemsQuery } from './services/makeQuery.js';
-import { generateOnceADay } from './services/poemsPerDay.js';
+import {
+  createPoemQuery,
+  getTodaysPoemsQuery,
+  makeUpdateQuery,
+} from './services/makeQuery.js';
+import { cronTest, generateOnceADay } from './services/poemsPerDay.js';
 ////// --------- end of imports
 
 ///////////////---------SOCKET.io
