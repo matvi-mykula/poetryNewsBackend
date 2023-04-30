@@ -15,7 +15,7 @@ import {
   getTodaysPoemsQuery,
   makeUpdateQuery,
 } from './services/makeQuery.js';
-import { generateOnceADay } from './services/poemsPerDay.js';
+import { generateOnceADay, everyMinute } from './services/poemsPerDay.js';
 ////// --------- end of imports
 
 ///////////////---------SOCKET.io
@@ -32,9 +32,7 @@ io.on('connection', (socket) => {
   ///GET ALL POEMS ON TODAY ---------------
   socket.on('get_todays_poems', (key) => {
     console.log('get_today emit recieved');
-    console.log({ key });
     const query = getTodaysPoemsQuery(key);
-    console.log({ query });
 
     pool.query(query, (err, result) => {
       if (err) {
@@ -42,12 +40,10 @@ io.on('connection', (socket) => {
         socket.emit('error', 'Error while retrieving entry');
       } else {
         /// is this ok or do i need try catch??
-        console.log(result.rows.length);
         console.log('get poems succesful');
         result.rows.forEach((poem) => {
           poem.content = poem.content.split(',');
         });
-        console.log(result.rows);
         socket.emit('todays_poems', {
           success: true,
           code: 200,
@@ -59,7 +55,6 @@ io.on('connection', (socket) => {
   //// UPDATE POEMDATA
   socket.on('poem:updated', (poemData) => {
     console.log('update');
-    console.log(poemData);
     const query = makeUpdateQuery(poemData);
     pool.query(query, (err, result) => {
       if (err) {
@@ -160,7 +155,6 @@ app.post('/', async (req, res) => {
     });
     console.log(response.data.choices);
     const haiku = response.data.choices[0].text;
-    console.log({ haiku });
 
     return res.send({ success: true, code: 200, response: haiku });
   } catch (err) {

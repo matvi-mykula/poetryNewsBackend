@@ -6,13 +6,24 @@ import { openai, pool } from '../server.js';
 import { getSentiment } from './getSentiment.js';
 
 //
+const scheduledTime = '53 18 * * *';
+const everyMinute = cron.schedule(scheduledTime, () => {
+  console.log('everyminute');
+  console.log(scheduledTime);
+});
 
 ////// need to iron out timing of this... time stamp is create in isostring 8601 format
 //// cron schedules in local time so there is an overlap of no haikus...
-const generateOnceADay = cron.schedule('03 19 * * *', () => {
+const generateOnceADay = cron.schedule(scheduledTime, () => {
   console.log('Once a Day');
-  makeAllForCategory('pop');
-  makeAllForCategory('news');
+  try {
+    makeAllForCategory('pop');
+    console.log('making pop');
+    makeAllForCategory('news');
+    console.log('making news');
+  } catch (err) {
+    console.log('once a day failed');
+  }
 });
 
 /// this is to save money on openai prompts
@@ -50,20 +61,27 @@ const makePoem = async (list, category) => {
     const haiku = haikuResponse.split('\n').filter((str) => str.trim() !== '');
 
     const sentiment = getSentiment(haiku.join(' '));
-    const today = new Date();
-    console.log(today);
-    console.log({ haiku });
+    const now = new Date();
+    const today = now
+      .toLocaleString('en-US', {
+        timeZone: 'America/Los_Angeles',
+        format: 'isoString',
+      })
+      .split(', ')[0];
+
     const newPoem = {
-      datestamp: today.toISOString(),
+      datestamp: today,
       category: category,
       content: haiku,
       goods: 0,
       bads: 0,
       sentiment: sentiment,
     };
-
+    console.log({ newPoem });
+    console.log('making new poem');
     pool.query(createPoemQuery(newPoem), (err, res) => {
       if (err) {
+        console.log('query problem');
         console.log(err);
       } else {
         console.log({ success: true, code: 200, result: res });
@@ -73,8 +91,9 @@ const makePoem = async (list, category) => {
       }
     });
   } catch (err) {
+    console.log('make poem error');
     console.log(err);
     return;
   }
 };
-export { generateOnceADay };
+export { generateOnceADay, everyMinute };
