@@ -1,12 +1,11 @@
-# fly.toml file generated for icy-river-1119 on 2023-04-29T10:19:39-07:00
+# fly.toml file generated for solitary-wildflower-8091 on 2023-04-29T14:46:15-07:00
 
-app = "icy-river-1119"
+app = "solitary-wildflower-8091"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
-  PORT = "8080"
 
 [experimental]
   auto_rollback = true
@@ -21,10 +20,6 @@ processes = []
     hard_limit = 25
     soft_limit = 20
     type = "connections"
-  
-[[services.env]]
-
- 
 
   [[services.ports]]
     force_https = true

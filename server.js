@@ -76,6 +76,20 @@ io.on('connection', (socket) => {
   });
 });
 ///////////------
+const isProd = app.get('env') === 'development' ? false : true;
+
+let pool;
+isProd
+  ? (pool = new Pool({
+      connectionString: process.env.CONNECTION_STRING,
+    }))
+  : (pool = new Pool({
+      user: process.env.DB_USER,
+      host: process.env.DB_HOST,
+      database: process.env.DB_NAME,
+      password: process.env.DB_PASSWORD,
+      port: process.env.DB_PORT,
+    }));
 
 // Set up PostgreSQL pool
 // const pool = new Pool({
@@ -85,9 +99,10 @@ io.on('connection', (socket) => {
 //   password: process.env.DB_PASSWORD,
 //   port: process.env.DB_PORT,
 // });
-const pool = new Pool({
-  connectionString: process.env.CONNECTION_STRING,
-});
+
+// const pool = new Pool({
+//   connectionString: process.env.CONNECTION_STRING,
+// });
 const createTable = `CREATE TABLE poetryNews (
   id SERIAL PRIMARY KEY,
   datestamp DATE,
@@ -104,13 +119,13 @@ pool.connect((err) => {
     console.log(err);
   } else {
     console.log('connected to db');
-    pool.query(createTable, (err, result) => {
-      if (err) {
-        console.log('err');
-      } else {
-        console.log('success');
-      }
-    });
+    // pool.query(createTable, (err, result) => {
+    //   if (err) {
+    //     console.log('err');
+    //   } else {
+    //     console.log('success');
+    //   }
+    // });
   }
 });
 
