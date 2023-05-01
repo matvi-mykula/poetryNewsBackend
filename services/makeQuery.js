@@ -1,10 +1,18 @@
 const createPoemQuery = (poemData) => {
   const { datestamp, category, content, goods, bads, sentiment } = poemData;
+  /// must control content to not allow for wierd quotes.. apparently '' will be fine instead of '
+  // or i can parameterize the values going into query
+  // const escapedContent = `${content}`.replace(/'/g, "''");
 
-  const createPoemQuery = `INSERT INTO poetryNews(datestamp, category, content, goods, bads, sentiment) 
-    VALUES ('${datestamp}', '${category}', '${content}', '${goods}', '${bads}', '${sentiment}')`;
+  // const createPoemQuery = `INSERT INTO poetryNews(datestamp, category, content, goods, bads, sentiment)
+  //   VALUES ('${datestamp}', '${category}', '${escapedContent}', '${goods}', '${bads}', '${sentiment}')`;
 
-  return createPoemQuery;
+  // with parameterized variables
+  const createPoemQuery = `INSERT INTO poetryNews(datestamp, category, content, goods, bads, sentiment)
+  VALUES ($1, $2, $3, $4, $5, $6)`;
+  const values = [datestamp, category, content, goods, bads, sentiment];
+
+  return [createPoemQuery, values];
 };
 
 const getTodaysPoemsQuery = (key) => {

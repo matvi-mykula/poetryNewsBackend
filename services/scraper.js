@@ -29,6 +29,8 @@ const getTopWords = async (key) => {
 
   const words = combinedTitles.split(' ');
   let filteredWords = words.filter((str) => parseInt(str) !== Number(str));
+  const punctuationRegex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
+  filteredWords = filteredWords.map((str) => str.replace(punctuationRegex, ''));
 
   filteredWords = filteredWords.filter(
     (word) => !stopwords.includes(word.toLocaleLowerCase())
