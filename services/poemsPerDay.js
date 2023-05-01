@@ -6,7 +6,8 @@ import { openai, pool } from '../server.js';
 import { getSentiment } from './getSentiment.js';
 
 //
-const scheduledTime = '53 18 * * *';
+const scheduledTime = '05 07 * * *'; /// this should => 705am utc time which => 1205am pacific
+// this is done cause the fly server time is kept in utc time
 const everyMinute = cron.schedule(scheduledTime, () => {
   console.log('everyminute');
   console.log(scheduledTime);

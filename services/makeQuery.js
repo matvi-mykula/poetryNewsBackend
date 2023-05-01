@@ -8,9 +8,19 @@ const createPoemQuery = (poemData) => {
 };
 
 const getTodaysPoemsQuery = (key) => {
-  const today = new Date().toISOString().split('T')[0];
+  // const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const today = now
+    .toLocaleString('en-US', {
+      timeZone: 'America/Los_Angeles',
+      format: 'isoString',
+    })
+    .split(', ');
+  console.log(today[0]);
+  console.log('today');
+
   const todaysPoemsQuery = `Select * FROM poetryNews 
-  WHERE datestamp = '${today}' 
+  WHERE datestamp = '${today[0]}' 
   AND category = '${key}'`;
   return todaysPoemsQuery;
 };
