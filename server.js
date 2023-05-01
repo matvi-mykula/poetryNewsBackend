@@ -165,6 +165,32 @@ app.post('/', async (req, res) => {
 app.get('/', (req, res) => {
   res.send('Hello from subconscious server!');
 });
+app.post('/api/test', (req, res) => {
+  console.log('api/test');
+  console.log(req.body);
+  if (req.body) {
+    console.log('hello');
+    const [query, values] = createPoemQuery(req.body);
+    console.log({ query });
+    console.log({ values });
+
+    pool.query(query, values, (err, res) => {
+      if (err) {
+        console.log('query problem');
+        console.log(err);
+      } else {
+        console.log({ success: true, code: 200, result: res });
+        /// might want to add a socket emit here to let front end know there was an update
+        // socket.emit('server', { success: true, code: 200, result: res });
+        return;
+      }
+    });
+  }
+  if (req.body.foo) {
+    console.log('foo');
+  }
+  res.send('Hello from subconscious server!');
+});
 app.post('/save', async (req, res) => {
   /////if new poem then create new
   //// if old poem then update
@@ -193,3 +219,4 @@ server.listen('8080', () => {
 });
 export { openai, pool };
 generateOnceADay;
+// everyMinute;
