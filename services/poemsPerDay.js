@@ -6,7 +6,7 @@ import { openai, pool } from '../server.js';
 import { getSentiment } from './getSentiment.js';
 
 //
-const scheduledTime = '05 07 * * *'; /// this should => 705am utc time which => 1205am pacific
+const scheduledTime = '48 14 * * *'; /// this should => 705am utc time which => 1205am pacific
 // this is done cause the fly server time is kept in utc time
 const everyMinute = cron.schedule(scheduledTime, () => {
   console.log('everyminute');
@@ -80,8 +80,9 @@ const makePoem = async (list, category) => {
       sentiment: sentiment,
     };
     console.log({ newPoem });
+    [query, values] = createPoemQuery(newPoem);
     console.log('making new poem');
-    pool.query(createPoemQuery(newPoem), (err, res) => {
+    pool.query(query, values, (err, res) => {
       if (err) {
         console.log('query problem');
         console.log(err);
