@@ -6,7 +6,8 @@ import { openai, pool } from '../server.js';
 import { getSentiment } from './getSentiment.js';
 
 //
-const scheduledTime = '8 17 * * *'; /// this should => 705am utc time which => 1205am pacific
+const scheduledTime = '05 07 * * *'; /// this should => 705am utc time which
+///=> 1205am pacific
 // this is done cause the fly server time is kept in utc time
 const everyMinute = cron.schedule(scheduledTime, () => {
   console.log('everyminute');
@@ -32,7 +33,8 @@ const chooseRandomHalf = (list) => {
   list.sort(() => Math.random() - 0.5);
   const halfLength = Math.floor(list.length / 2);
   const selectedElements = [];
-  for (let i = 0; i < halfLength; i++) {
+  // right now just get 5 random words from bigger list to create more variety
+  for (let i = 0; i < 5; i++) {
     selectedElements.push(list[i]);
   }
   return selectedElements;
@@ -48,7 +50,7 @@ const makeAllForCategory = async (category) => {
 
 const makePoem = async (list, category) => {
   try {
-    const prompt = `write short rhyming poem using these words: ${list}`;
+    const prompt = `write short saying using these words: ${list}`;
     // const prompt = `Write a haiku using some of these words: ${list}`;
     const response = await openai.createCompletion({
       model: 'text-davinci-003',
