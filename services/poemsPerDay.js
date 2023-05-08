@@ -50,7 +50,7 @@ const makeAllForCategory = async (category) => {
 
 const makePoem = async (list, category) => {
   try {
-    const prompt = `write short saying using these words: ${list}`;
+    const prompt = `write haiku using these words: ${list}`;
     // const prompt = `Write a haiku using some of these words: ${list}`;
     const response = await openai.createCompletion({
       model: 'text-davinci-003',
