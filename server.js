@@ -15,7 +15,12 @@ import {
   getTodaysPoemsQuery,
   makeUpdateQuery,
 } from './services/makeQuery.js';
-import { generateOnceADay, everyMinute } from './services/poemsPerDay.js';
+import {
+  generateOnceADay,
+  everyMinute,
+  makePoem,
+  chooseRandomHalf,
+} from './services/poemsPerDay.js';
 ////// --------- end of imports
 
 ///////////////---------SOCKET.io
@@ -68,6 +73,12 @@ io.on('connection', (socket) => {
         /// emit 'get_todays_poems; from frontend
       }
     });
+  });
+
+  socket.on('create:poem', async (category) => {
+    const topList = await getTopWords(category);
+
+    makePoem(chooseRandomHalf(topList), category);
   });
 });
 ///////////------

@@ -19,6 +19,7 @@ const everyMinute = cron.schedule(scheduledTime, () => {
 const generateOnceADay = cron.schedule(scheduledTime, () => {
   console.log('Once a Day');
   try {
+    console.log('haiku');
     makeAllForCategory('pop');
     console.log('making pop');
     makeAllForCategory('news');
@@ -51,6 +52,7 @@ const makeAllForCategory = async (category) => {
 const makePoem = async (list, category) => {
   try {
     const prompt = `write haiku using these words: ${list}`;
+    console.log({ prompt });
     // const prompt = `Write a haiku using some of these words: ${list}`;
     const response = await openai.createCompletion({
       model: 'text-davinci-003',
@@ -103,4 +105,4 @@ const makePoem = async (list, category) => {
     return;
   }
 };
-export { generateOnceADay, everyMinute };
+export { generateOnceADay, everyMinute, makePoem, chooseRandomHalf };
