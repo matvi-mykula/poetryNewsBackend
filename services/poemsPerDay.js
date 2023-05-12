@@ -46,6 +46,7 @@ const makeAllForCategory = async (category) => {
   const topList = await getTopWords(category);
   for (let i = 0; i < 10; i++) {
     makePoem(chooseRandomHalf(topList), category);
+    console.log(`${category}-- ${i}`);
   }
 };
 
@@ -85,8 +86,7 @@ const makePoem = async (list, category) => {
     };
     console.log({ newPoem });
     const [query, values] = createPoemQuery(newPoem);
-    console.log({ query });
-    console.log({ values });
+
     console.log('making new poem');
     pool.query(query, values, (err, res) => {
       if (err) {
